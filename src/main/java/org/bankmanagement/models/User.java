@@ -19,13 +19,13 @@ import java.util.List;
 public class User {
 
     @Id
-    @SequenceGenerator(name = "userSeq", sequenceName = "user_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "userSeq", sequenceName = "accounts.user_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "userSeq")
     @Column(name = "id")
     private long id;
 
     @Column(name = "email", nullable = false, unique = true)
-    private String eMail;
+    private String email;
 
     @Column(name = "username", nullable = false, unique = true)
     private String username;

@@ -45,6 +45,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         CustomAuthenticationFilter authenticationFilter = new CustomAuthenticationFilter(securityService);
         authenticationFilter.setFilterProcessesUrl(LOGIN_ENDPOINT);
         authenticationFilter.setAuthenticationManager(authenticationManagerBean());
+
         http
                 .csrf().disable()
                 .authorizeRequests()
