@@ -1,9 +1,7 @@
 package org.bankmanagement.services;
 
-import ch.qos.logback.core.encoder.EchoEncoder;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bankmanagement.data_transfer_objects.RegisterTicket;
 import org.bankmanagement.data_transfer_objects.UserDto;
 import org.bankmanagement.exceptions.UserAlreadyExistsByEmail;
@@ -12,27 +10,17 @@ import org.bankmanagement.mappers.UserMapper;
 import org.bankmanagement.models.Role;
 import org.bankmanagement.models.User;
 import org.bankmanagement.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
-import java.util.Date;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
-public class SecurityService {
+public class UserService {
 
     private final UserMapper userMapper;
     private final UserRepository userRepo;
     private final PasswordEncoder encoder;
-
-    @Value("${security.issuer}")
-    private String issuer;
-    @Value("${security.lifetime}")
-    private int lifeTime;
-    @Value("${security.secret}")
-    private String secret;
 
     public UserDto register(RegisterTicket ticket) {
         String username = ticket.getUsername();
@@ -44,6 +32,7 @@ public class SecurityService {
         if (userRepo.existsByEmail(email)) {
             throw new UserAlreadyExistsByEmail(email);
         }
+        log.info("Register new client");
 
         User user = new User()
                 .setEmail(email)
@@ -54,18 +43,4 @@ public class SecurityService {
         return userMapper.mapToDto(userRepo.save(user));
     }
 
-
-    public String createToken(String username) {
-        Calendar calendar = Calendar.getInstance();
-        Date now = calendar.getTime();
-        calendar.add(Calendar.MINUTE, lifeTime);
-        Date expirationDate = calendar.getTime();
-
-        return JWT.create()
-                .withSubject(username)
-                .withIssuer(issuer)
-                .withIssuedAt(now)
-                .withExpiresAt(expirationDate)
-                .sign(Algorithm.HMAC256(secret));
-    }
 }
