@@ -1,18 +1,21 @@
 package org.bankmanagement.data_transfer_objects;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Size;
+
 @Getter
 @Setter
-@EqualsAndHashCode
 @Accessors(chain = true)
-public class UserDto {
-    private long id;
+public class UpdateTicket {
+    @Email
     private String email;
+    @Size(min = 3, max = 50)
     private String username;
-    private String role;
-    private boolean active;
+    @Size(min = 3, max = 50)
+    private String password;
+
 }

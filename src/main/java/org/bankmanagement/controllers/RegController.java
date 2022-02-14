@@ -18,6 +18,6 @@ public class RegController {
 
     @PostMapping("/api/login/reg")
     public ResponseEntity<?> registerClient(@RequestBody @Validated RegisterTicket ticket) {
-        return new ResponseEntity(service.register(ticket), HttpStatus.OK);
+        return new ResponseEntity(service.regUser(ticket), HttpStatus.OK);
     }
 }
