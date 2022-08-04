@@ -23,7 +23,8 @@ custom:
   security:
     issuer: east bank manager
 #    token lifetime in minutes
-    lifetime: 15
+    lifetime:
+      minutes: 15
 #    for security measures secret must be at least 256 bits = 32 characters
     secret: secret that is longer than 32 characters
 
