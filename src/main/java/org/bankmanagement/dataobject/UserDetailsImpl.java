@@ -2,6 +2,7 @@ package org.bankmanagement.dataobject;
 
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.bankmanagement.enums.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,18 +11,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Setter
-@Accessors(chain = true)
 public class UserDetailsImpl implements UserDetails {
 
     private String username;
     private String password;
     private boolean active;
-    private String role;
+    private Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(role));
+        authorities.add(new SimpleGrantedAuthority(role.name()));
         return authorities;
     }
 

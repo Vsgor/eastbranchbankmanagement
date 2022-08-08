@@ -12,7 +12,7 @@ import javax.persistence.*;
 public class Slot {
 
     @Id
-    private long id;
+    private Long id;
 
     @Column(name = "state", nullable = false)
     private long state;
