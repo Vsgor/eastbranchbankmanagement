@@ -2,6 +2,8 @@ package org.bankmanagement.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
+import org.bankmanagement.enums.Role;
 
 import javax.persistence.*;
 import java.util.List;
@@ -13,7 +15,7 @@ import java.util.List;
 public class Client {
 
     @Id
-    private long id;
+    private Long id;
 
     @Column(name = "email", nullable = false, unique = true)
     private String email;

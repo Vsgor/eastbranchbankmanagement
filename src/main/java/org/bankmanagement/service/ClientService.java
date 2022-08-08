@@ -5,12 +5,16 @@ import org.bankmanagement.dataobject.ClientDto;
 import org.bankmanagement.dataobject.RegisterTicket;
 import org.bankmanagement.dataobject.UpdateTicket;
 import org.bankmanagement.entity.Client;
-import org.bankmanagement.entity.Role;
+import org.bankmanagement.enums.Role;
 import org.bankmanagement.exception.*;
 import org.bankmanagement.mapper.ClientMapper;
 import org.bankmanagement.repository.ClientRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+
+import static org.apache.logging.log4j.util.Strings.isNotBlank;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +24,41 @@ public class ClientService {
     private final ClientRepository userRepo;
     private final PasswordEncoder encoder;
 
-    public ClientDto regUser(RegisterTicket ticket) {
+    public ClientDto getClient(String username) {
+        Client client = findClient(username);
+        return clientMapper.mapToDto(client);
+    }
+
+    @Transactional
+    public ClientDto updateClient(String username, UpdateTicket ticket) {
+        Client client = findClient(username);
+
+        String newEmail = ticket.getEmail();
+        String newUsername = ticket.getUsername();
+        String newPassword = ticket.getPassword();
+        boolean changed = false;
+
+        if (isNotBlank(newEmail) && !newEmail.equals(client.getEmail())) {
+            if (userRepo.existsByEmail(newEmail)) throw new UserAlreadyExistsByEmailException(newEmail);
+            client.setEmail(newEmail);
+            changed = true;
+        }
+        if (isNotBlank(newUsername) && !newUsername.equals(client.getUsername())) {
+            if (userRepo.existsByUsername(newUsername)) throw new UserAlreadyExistsByUsernameException(newUsername);
+            client.setUsername(newUsername);
+            changed = true;
+        }
+        if (isNotBlank(newPassword) && !encoder.matches(newPassword, client.getPassword())) {
+            client.setPassword(encoder.encode(newPassword));
+            changed = true;
+        }
+
+        if (changed) return clientMapper.mapToDto(userRepo.save(client));
+
+        throw new UpdateRequestException();
+    }
+
+    public ClientDto registerClient(RegisterTicket ticket) {
         String email = ticket.getEmail();
         String username = ticket.getUsername();
 
@@ -33,49 +71,7 @@ public class ClientService {
         return clientMapper.mapToDto(userRepo.save(client));
     }
 
-    public ClientDto getClient(String username) {
-        Client client = findUser(username);
-        return clientMapper.mapToDto(client);
-    }
-
-    public ClientDto updateClient(String username, UpdateTicket ticket) {
-        Client client = findUser(username);
-        boolean changed = false;
-
-        String newEmail = client.getEmail().equals(ticket.getEmail()) ? null : ticket.getEmail();
-        String newName = client.getUsername().equals(ticket.getUsername()) ? null : ticket.getUsername();
-
-        if (userRepo.existsByEmail(newEmail)) throw new UserAlreadyExistsByEmailException(newEmail);
-        if (userRepo.existsByUsername(newName)) throw new UserAlreadyExistsByUsernameException(newName);
-
-        String newPassword = client.getPassword().equals(encoder.encode(ticket.getPassword()))
-                ? null : ticket.getPassword();
-
-        if (newEmail != null) {
-            client.setEmail(newEmail);
-            changed = true;
-        }
-        if (newName != null) {
-            client.setUsername(newName);
-            changed = true;
-        }
-        if (newPassword != null) {
-            client.setPassword(encoder.encode(newPassword));
-            changed = true;
-        }
-
-        if (changed) {
-            return clientMapper.mapToDto(userRepo.save(client));
-        } else throw new UpdateRequestException();
-    }
-
-    public ClientDto deleteClient(String username) {
-        Client client = findUser(username);
-        client.setActive(false);
-        return clientMapper.mapToDto(userRepo.save(client));
-    }
-
-    private Client findUser(String username) {
+    private Client findClient(String username) {
         Client client = userRepo.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
         if (!client.isActive()) throw new UserIsDisabledException(username);
