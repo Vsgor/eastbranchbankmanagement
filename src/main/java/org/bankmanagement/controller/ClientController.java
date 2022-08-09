@@ -12,7 +12,7 @@ import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/client")
+@RequestMapping("client")
 public class ClientController {
 
     private final ClientService service;
@@ -31,9 +31,4 @@ public class ClientController {
     public ClientDto registerClient(@RequestBody @Validated RegisterTicket ticket) {
         return service.registerClient(ticket);
     }
-
-//    @DeleteMapping
-//    public ClientDto deleteClient(Principal principal) {
-//        return service.deleteClient(principal.getName());
-//    }
 }

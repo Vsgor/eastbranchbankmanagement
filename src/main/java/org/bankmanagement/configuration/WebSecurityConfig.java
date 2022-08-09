@@ -21,8 +21,8 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 @RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static final String SIGNUP_ENDPOINT = "/api/client/sign-up";
-    private static final String ADMIN_ENDPOINT = "/api/admin/**";
+    private static final String SIGNUP_ENDPOINT = "/client/sign-up";
+    private static final String ADMIN_ENDPOINT = "/admin/**";
     private final UserDetailsService userDetailsService;
     private final TokenManager tokenManager;
 

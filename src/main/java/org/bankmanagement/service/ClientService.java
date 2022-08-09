@@ -71,7 +71,7 @@ public class ClientService {
         return clientMapper.mapToDto(userRepo.save(client));
     }
 
-    private Client findClient(String username) {
+    protected Client findClient(String username) {
         Client client = userRepo.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
         if (!client.isActive()) throw new UserIsDisabledException(username);
