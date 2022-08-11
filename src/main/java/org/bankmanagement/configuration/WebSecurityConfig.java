@@ -21,8 +21,8 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 @RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static final String SIGNUP_ENDPOINT = "/client/sign-up";
     private static final String ADMIN_ENDPOINT = "/admin/**";
+    private static final String LOGIN_ENDPOINT = "/login";
     private final UserDetailsService userDetailsService;
     private final TokenManager tokenManager;
 
@@ -45,18 +45,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         AbstractAuthenticationProcessingFilter authenticationFilter = new CustomAuthenticationFilter(tokenManager);
-        authenticationFilter.setFilterProcessesUrl(SIGNUP_ENDPOINT);
+        authenticationFilter.setFilterProcessesUrl(LOGIN_ENDPOINT);
         authenticationFilter.setAuthenticationManager(authenticationManagerBean());
 
         CustomAuthorizationFilter authorizationFilter =
-                new CustomAuthorizationFilter(tokenManager, userDetailsService, SIGNUP_ENDPOINT);
+                new CustomAuthorizationFilter(tokenManager, userDetailsService, LOGIN_ENDPOINT);
 
         http
                 .csrf().disable()
                     .authorizeRequests()
                         .antMatchers(ADMIN_ENDPOINT)
                             .hasRole(Role.ROLE_ADMIN.getRoleWithNoPrefix())
-                        .antMatchers(SIGNUP_ENDPOINT)
+                        .antMatchers(LOGIN_ENDPOINT)
                             .anonymous()
                         .anyRequest()
                             .authenticated()
