@@ -1,2 +1,4 @@
 .idea/
 target/
+/east-branch-bank-system.iml
+.gitignore

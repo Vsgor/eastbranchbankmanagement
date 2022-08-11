@@ -24,6 +24,11 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+
 <!--        Веб разработка-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
