@@ -1,6 +1,7 @@
 package org.bankmanagement.service;
 
 import lombok.RequiredArgsConstructor;
+import org.bankmanagement.aspect.log.LogMethod;
 import org.bankmanagement.dataobject.ClientDto;
 import org.bankmanagement.dataobject.RegisterTicket;
 import org.bankmanagement.dataobject.UpdateTicket;
@@ -24,11 +25,13 @@ public class ClientService {
     private final ClientRepository userRepo;
     private final PasswordEncoder encoder;
 
+    @LogMethod
     public ClientDto getClient(String username) {
         Client client = findClient(username);
         return clientMapper.mapToDto(client);
     }
 
+    @LogMethod
     @Transactional
     public ClientDto updateClient(String username, UpdateTicket ticket) {
         Client client = findClient(username);
@@ -58,6 +61,7 @@ public class ClientService {
         throw new UpdateRequestException();
     }
 
+    @LogMethod
     public ClientDto registerClient(RegisterTicket ticket) {
         String email = ticket.getEmail();
         String username = ticket.getUsername();

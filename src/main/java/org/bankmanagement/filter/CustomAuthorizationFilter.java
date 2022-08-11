@@ -22,13 +22,13 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
     private final TokenManager tokenManager;
     private final UserDetailsService detailsService;
-    private final String endpoint;
+    private final String loginEndpoint;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, @NotNull HttpServletResponse response,
                                     @NotNull FilterChain filterChain) throws ServletException, IOException {
 
-        if(!request.getServletPath().startsWith(endpoint)) authorize(request);
+        if (!request.getServletPath().startsWith(loginEndpoint)) authorize(request);
 
         filterChain.doFilter(request, response);
     }
