@@ -6,11 +6,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -23,24 +26,29 @@ class SlotRepositoryTest {
     private ClientRepository clientRepository;
 
     @Test
-    void testBeanInjected() {
-        assertThat(slotRepository).isNotNull();
+    void saveSlot_WithNoClient_ShouldThrowException() {
+        Slot slot = getSlot(null, null);
+
+        assertThatThrownBy(() -> slotRepository.saveAndFlush(slot))
+                .isExactlyInstanceOf(DataIntegrityViolationException.class);
     }
 
     @Test
-    void saveSlot_WithRealClient() {
+    void saveSlot_WithClient() {
         Optional<Client> client = clientRepository.findById(1L);
-        assertThat(client.isPresent()).isTrue();
+        assertTrue(client.isPresent());
 
-        Slot slot = getSlot(client.get());
+        Slot slot = getSlot(null, client.get());
 
-        slotRepository.save(slot);
+        slotRepository.saveAndFlush(slot);
 
         assertThat(slot.getId()).isNotNull();
+        assertThat(slot).isEqualTo(getSlot(slot.getId(), client.get()));
     }
 
-    private Slot getSlot(Client client) {
+    private Slot getSlot(Long id, Client client) {
         Slot slot = new Slot();
+        slot.setId(id);
         slot.setClient(client);
         slot.setActive(false);
         return slot;

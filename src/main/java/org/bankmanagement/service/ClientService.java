@@ -81,4 +81,11 @@ public class ClientService {
         if (!client.isActive()) throw new UserIsDisabledException(username);
         return client;
     }
+
+    protected Client findClient(Long clientId) {
+        Client client = userRepo.findById(clientId)
+                .orElseThrow(() -> new UserNotFoundException(clientId));
+        if (!client.isActive()) throw new UserIsDisabledException(clientId);
+        return client;
+    }
 }
