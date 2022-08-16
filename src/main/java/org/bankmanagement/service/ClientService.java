@@ -75,10 +75,17 @@ public class ClientService {
         return clientMapper.mapToDto(userRepo.save(client));
     }
 
-    private Client findClient(String username) {
+    protected Client findClient(String username) {
         Client client = userRepo.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
         if (!client.isActive()) throw new UserIsDisabledException(username);
+        return client;
+    }
+
+    protected Client findClient(Long clientId) {
+        Client client = userRepo.findById(clientId)
+                .orElseThrow(() -> new UserNotFoundException(clientId));
+        if (!client.isActive()) throw new UserIsDisabledException(clientId);
         return client;
     }
 }

@@ -1,7 +1,6 @@
 package org.bankmanagement.dataobject;
 
 import lombok.Setter;
-import lombok.experimental.Accessors;
 import org.bankmanagement.enums.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

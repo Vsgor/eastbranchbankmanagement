@@ -31,3 +31,5 @@ custom:
 
 server:
   port: 7490
+  servlet:
+    context-path: /api

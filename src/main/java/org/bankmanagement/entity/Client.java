@@ -1,8 +1,8 @@
 package org.bankmanagement.entity;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.Accessors;
 import org.bankmanagement.enums.Role;
 
 import javax.persistence.*;
@@ -11,10 +11,12 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@EqualsAndHashCode
 @Table(name = "client", schema = "accounts")
 public class Client {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "email", nullable = false, unique = true)
@@ -33,6 +35,6 @@ public class Client {
     @Column(name = "active", nullable = false)
     private boolean active;
 
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "client", orphanRemoval = true)
     private List<Slot> slots;
 }

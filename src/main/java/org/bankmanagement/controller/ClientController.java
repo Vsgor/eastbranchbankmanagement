@@ -12,7 +12,7 @@ import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/client")
+@RequestMapping("client")
 public class ClientController {
 
     private final ClientService service;
