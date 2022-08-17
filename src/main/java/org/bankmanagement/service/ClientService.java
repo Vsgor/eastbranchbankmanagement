@@ -7,7 +7,10 @@ import org.bankmanagement.dataobject.RegisterTicket;
 import org.bankmanagement.dataobject.UpdateTicket;
 import org.bankmanagement.entity.Client;
 import org.bankmanagement.enums.Role;
-import org.bankmanagement.exception.*;
+import org.bankmanagement.exception.UserAlreadyExistsByEmailException;
+import org.bankmanagement.exception.UserAlreadyExistsByUsernameException;
+import org.bankmanagement.exception.UserIsDisabledException;
+import org.bankmanagement.exception.UserNotFoundException;
 import org.bankmanagement.mapper.ClientMapper;
 import org.bankmanagement.repository.ClientRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,26 +42,20 @@ public class ClientService {
         String newEmail = ticket.getEmail();
         String newUsername = ticket.getUsername();
         String newPassword = ticket.getPassword();
-        boolean changed = false;
 
         if (isNotBlank(newEmail) && !newEmail.equals(client.getEmail())) {
             if (userRepo.existsByEmail(newEmail)) throw new UserAlreadyExistsByEmailException(newEmail);
             client.setEmail(newEmail);
-            changed = true;
         }
         if (isNotBlank(newUsername) && !newUsername.equals(client.getUsername())) {
             if (userRepo.existsByUsername(newUsername)) throw new UserAlreadyExistsByUsernameException(newUsername);
             client.setUsername(newUsername);
-            changed = true;
         }
         if (isNotBlank(newPassword) && !encoder.matches(newPassword, client.getPassword())) {
             client.setPassword(encoder.encode(newPassword));
-            changed = true;
         }
 
-        if (changed) return clientMapper.mapToDto(userRepo.save(client));
-
-        throw new UpdateRequestException();
+        return clientMapper.mapToDto(client);
     }
 
     @LogMethod

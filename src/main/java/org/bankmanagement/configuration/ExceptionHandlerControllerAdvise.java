@@ -1,7 +1,6 @@
 package org.bankmanagement.configuration;
 
 import lombok.extern.slf4j.Slf4j;
-import org.bankmanagement.exception.UpdateRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -27,11 +26,6 @@ public class ExceptionHandlerControllerAdvise {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(UpdateRequestException.class)
-    public ResponseEntity<String> handleUpdateRequestException(UpdateRequestException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 

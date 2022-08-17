@@ -7,12 +7,10 @@ import org.bankmanagement.service.SlotService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -22,18 +20,18 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.bankmanagement.configuration.ResponseResultMatcher.responseBody;
+import static org.bankmanagement.controller.AbstractControllerIT.USERNAME;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
 @WebMvcTest(SlotController.class)
+@WithMockUser(username = USERNAME)
 class SlotControllerIT extends AbstractControllerIT {
 
     private static final String URI = "/slot";
-    private static final String USERNAME = "Some username";
 
-    @Autowired
-    private MockMvc mockMvc;
     @MockBean
     private SlotService slotService;
     @Captor
@@ -49,7 +47,6 @@ class SlotControllerIT extends AbstractControllerIT {
 
     @Test
     @SneakyThrows
-    @WithMockUser(username = USERNAME)
     void getAllSlots() {
         SlotDto firstSlotDto = getSlotDto(1L);
         SlotDto secondSlotDto = getSlotDto(2L);
@@ -68,7 +65,6 @@ class SlotControllerIT extends AbstractControllerIT {
 
     @Test
     @SneakyThrows
-    @WithMockUser(username = USERNAME)
     void getSlot() {
         Long slotId = 25L;
         SlotDto slotDto = getSlotDto(slotId);
@@ -85,7 +81,6 @@ class SlotControllerIT extends AbstractControllerIT {
 
     @Test
     @SneakyThrows
-    @WithMockUser(username = USERNAME)
     void openSlot() {
         SlotDto slotDto = getSlotDto(1L);
 
@@ -100,7 +95,6 @@ class SlotControllerIT extends AbstractControllerIT {
 
     @Test
     @SneakyThrows
-    @WithMockUser(username = USERNAME)
     void updateSlotState_WithNotPositiveTransferSum() {
         MultiValueMap<String, String> paramMap = new LinkedMultiValueMap<>();
         paramMap.add("slotId", "23452");
@@ -116,7 +110,6 @@ class SlotControllerIT extends AbstractControllerIT {
 
     @Test
     @SneakyThrows
-    @WithMockUser(username = USERNAME)
     void updateSlotState_WithNoSlotId() {
         SlotDto slotDto = getSlotDto(200L);
 
@@ -135,7 +128,6 @@ class SlotControllerIT extends AbstractControllerIT {
 
     @Test
     @SneakyThrows
-    @WithMockUser(username = USERNAME)
     void transferToCustomer_WithEemptyTicket() {
         mockMvc.perform(post(URI.concat("/transfer")))
                 .andExpect(status().isBadRequest())
@@ -146,7 +138,6 @@ class SlotControllerIT extends AbstractControllerIT {
 
     @Test
     @SneakyThrows
-    @WithMockUser(username = USERNAME)
     void transferToCustomer_WithNotPositiveSum() {
         TransferDto transferDto = new TransferDto();
         transferDto.setDepositClientId(3L);
@@ -162,7 +153,6 @@ class SlotControllerIT extends AbstractControllerIT {
 
     @Test
     @SneakyThrows
-    @WithMockUser(username = USERNAME)
     void transferToCustomer() {
         TransferDto transferDto = new TransferDto();
         transferDto.setDepositClientId(3L);
@@ -184,7 +174,6 @@ class SlotControllerIT extends AbstractControllerIT {
 
     @Test
     @SneakyThrows
-    @WithMockUser(username = USERNAME)
     void closeSlot() {
         Long slotId = 52L;
         String deleteSlotUri = String.join("/", URI, slotId.toString());

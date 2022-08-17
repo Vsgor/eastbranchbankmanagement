@@ -53,10 +53,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .csrf().disable()
-                    .authorizeRequests()
-                        .antMatchers(ADMIN_ENDPOINT)
-                            .hasRole(Role.ROLE_ADMIN.getRoleWithNoPrefix())
-                        .antMatchers(LOGIN_ENDPOINT)
+                .authorizeRequests()
+                .antMatchers(ADMIN_ENDPOINT)
+                .hasRole(Role.ROLE_ADMIN.getShortName())
+                .antMatchers(LOGIN_ENDPOINT.concat("/**"))
                             .anonymous()
                         .anyRequest()
                             .authenticated()
