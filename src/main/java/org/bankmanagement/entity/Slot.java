@@ -1,6 +1,5 @@
 package org.bankmanagement.entity;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +8,6 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode
 @Table(name = "slot", schema = "accounts")
 public class Slot {
 

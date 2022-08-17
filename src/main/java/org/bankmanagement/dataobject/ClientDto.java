@@ -1,16 +1,15 @@
 package org.bankmanagement.dataobject;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.bankmanagement.enums.Role;
 
 @Getter
 @Setter
-@EqualsAndHashCode
 public class ClientDto {
     private Long id;
     private String email;
     private String username;
-    private String role;
+    private Role role;
     private boolean active;
 }

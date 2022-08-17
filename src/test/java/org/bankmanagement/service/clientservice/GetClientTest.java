@@ -2,7 +2,8 @@ package org.bankmanagement.service.clientservice;
 
 import org.bankmanagement.dataobject.ClientDto;
 import org.bankmanagement.entity.Client;
-import org.bankmanagement.exception.*;
+import org.bankmanagement.exception.UserIsDisabledException;
+import org.bankmanagement.exception.UserNotFoundException;
 import org.bankmanagement.mapper.ClientMapper;
 import org.bankmanagement.repository.ClientRepository;
 import org.bankmanagement.service.ClientService;
@@ -14,11 +15,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class GetUserTest {
+class GetClientTest {
 
     @Mock
     private ClientMapper clientMapper;

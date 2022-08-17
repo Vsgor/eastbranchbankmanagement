@@ -2,14 +2,12 @@ package org.bankmanagement.dataobject;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.Accessors;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-@Accessors(chain = true)
 public class UpdateTicket {
     @Email
     private String email;

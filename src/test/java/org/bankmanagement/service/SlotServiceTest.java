@@ -11,6 +11,8 @@ import org.bankmanagement.mapper.SlotMapper;
 import org.bankmanagement.repository.SlotRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -35,6 +37,9 @@ class SlotServiceTest {
 
     @InjectMocks
     private SlotService slotService;
+
+    @Captor
+    private ArgumentCaptor<Slot> slotCaptor;
 
     private static Client getDefaultCLient(String username) {
         Client client = new Client();
@@ -161,15 +166,20 @@ class SlotServiceTest {
         SlotDto slotDto = mapToDto(slot);
 
         when(clientService.findClient(username)).thenReturn(client);
-        when(slotMapper.mapToDto(slot)).thenReturn(slotDto);
+        when(slotMapper.mapToDto(any(Slot.class))).thenReturn(slotDto);
 
         SlotDto result = slotService.createSlot(username);
 
         assertThat(result).usingRecursiveComparison().isEqualTo(slotDto);
 
         verify(clientService).findClient(username);
-        verify(slotRepository).save(slot);
-        verify(slotMapper).mapToDto(slot);
+
+        verify(slotRepository).save(slotCaptor.capture());
+        verify(slotMapper).mapToDto(slotCaptor.capture());
+
+        assertThat(slotCaptor.getAllValues())
+                .usingRecursiveFieldByFieldElementComparator()
+                .containsOnly(slot);
     }
 
     @Test

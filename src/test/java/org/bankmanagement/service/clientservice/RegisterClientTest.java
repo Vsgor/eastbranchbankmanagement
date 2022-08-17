@@ -65,7 +65,10 @@ class RegisterClientTest {
         String username = "Tutor";
         String password = "Rail";
 
-        RegisterTicket ticket = new RegisterTicket().setEmail(email).setUsername(username).setPassword(password);
+        RegisterTicket ticket = new RegisterTicket();
+        ticket.setEmail(email);
+        ticket.setUsername(username);
+        ticket.setPassword(password);
         Client client = new Client();
         client.setEmail(email);
         client.setUsername(username);

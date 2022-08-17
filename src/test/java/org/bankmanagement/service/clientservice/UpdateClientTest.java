@@ -7,9 +7,11 @@ import org.bankmanagement.exception.*;
 import org.bankmanagement.mapper.ClientMapper;
 import org.bankmanagement.repository.ClientRepository;
 import org.bankmanagement.service.ClientService;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -32,6 +34,8 @@ class UpdateClientTest {
 
     @InjectMocks
     private ClientService service;
+    @Captor
+    private ArgumentCaptor<Client> userArgumentCaptor;
 
     @Test
     public void updateClientShouldThrowUserNotFoundException() {
@@ -57,19 +61,34 @@ class UpdateClientTest {
         verifyNoInteractions(encoder);
     }
 
-    @Test
-    public void updateClient_ShouldThrowUserAlreadyExistsByEmailException() {
-        String email = "example@tutor.org";
-        String username = "Tutor";
-        String password = "Rail";
+    @NotNull
+    private static UpdateTicket getUpdateTicket(String email, String username, String password) {
+        UpdateTicket ticket = new UpdateTicket();
+        ticket.setUsername(username);
+        ticket.setPassword(password);
+        ticket.setEmail(email);
+        return ticket;
+    }
+
+    @NotNull
+    private static Client getClient(String email, String username, String password) {
         Client client = new Client();
         client.setUsername(username);
         client.setActive(true);
         client.setEmail(email);
         client.setPassword(password);
-        UpdateTicket ticket = new UpdateTicket();
+        return client;
+    }
+
+    @Test
+    public void updateClient_ShouldThrowUserAlreadyExistsByEmailException() {
+        String email = "example@tutor.org";
+        String username = "Tutor";
+        String password = "Rail";
         String newEmail = "bla@bla.bla";
-        ticket.setEmail(newEmail);
+
+        Client client = getClient(email, username, password);
+        UpdateTicket ticket = getUpdateTicket(newEmail, null, null);
 
         when(clientRepository.findByUsername(username)).thenReturn(Optional.of(client));
         when(clientRepository.existsByEmail(newEmail)).thenReturn(true);
@@ -88,14 +107,10 @@ class UpdateClientTest {
         String email = "example@tutor.org";
         String username = "Tutor";
         String password = "Rail";
-        Client client = new Client();
-        client.setUsername(username);
-        client.setActive(true);
-        client.setEmail(email);
-        client.setPassword(password);
-        UpdateTicket ticket = new UpdateTicket();
         String newUsername = "blablalba";
-        ticket.setUsername(newUsername);
+
+        Client client = getClient(email, username, password);
+        UpdateTicket ticket = getUpdateTicket(null, newUsername, null);
 
         when(clientRepository.findByUsername(username)).thenReturn(Optional.of(client));
         when(clientRepository.existsByUsername(newUsername)).thenReturn(true);
@@ -114,11 +129,8 @@ class UpdateClientTest {
         String email = "example@tutor.org";
         String username = "Tutor";
         String password = "Rail";
-        Client client = new Client();
-        client.setUsername(username);
-        client.setActive(true);
-        client.setEmail(email);
-        client.setPassword(password);
+
+        Client client = getClient(email, username, password);
 
         when(clientRepository.findByUsername(username)).thenReturn(Optional.of(client));
 
@@ -135,12 +147,9 @@ class UpdateClientTest {
         String email = "example@tutor.org";
         String username = "Tutor";
         String password = "Rail";
-        Client client = new Client();
-        client.setUsername(username);
-        client.setActive(true);
-        client.setEmail(email);
-        client.setPassword(password);
-        UpdateTicket ticket = new UpdateTicket().setUsername(username).setPassword(password).setEmail(email);
+
+        Client client = getClient(email, username, password);
+        UpdateTicket ticket = getUpdateTicket(email, username, password);
 
         when(clientRepository.findByUsername(username)).thenReturn(Optional.of(client));
         when(encoder.matches(password, password)).thenReturn(true);
@@ -163,12 +172,8 @@ class UpdateClientTest {
         String newName = "Paparapa";
         String newPassword = "Poow";
 
-        Client client = new Client();
-        client.setUsername(username);
-        client.setActive(true);
-        client.setEmail(email);
-        client.setPassword(password);
-        UpdateTicket ticket = new UpdateTicket().setUsername(newName).setPassword(newPassword).setEmail(newEmail);
+        Client client = getClient(email, username, password);
+        UpdateTicket ticket = getUpdateTicket(newEmail, newName, newPassword);
         ClientDto dto = new ClientDto();
 
         when(clientRepository.findByUsername(username)).thenReturn(Optional.of(client));
@@ -182,21 +187,20 @@ class UpdateClientTest {
 
         assertEquals(dto, response);
 
-        ArgumentCaptor<Client> userArgumentCaptor = ArgumentCaptor.forClass(Client.class);
         verify(clientRepository).save(userArgumentCaptor.capture());
-        Client value = userArgumentCaptor.getValue();
-        assertAll(
-                () -> assertEquals(newEmail, value.getEmail()),
-                () -> assertEquals(newName, value.getUsername()),
-                () -> assertEquals(newPassword, value.getPassword())
-        );
-
         verify(clientRepository).findByUsername(username);
         verify(clientRepository).existsByUsername(newName);
         verify(clientRepository).existsByEmail(newEmail);
         verify(clientMapper).mapToDto(client);
         verify(encoder).matches(newPassword, password);
         verify(encoder).encode(newPassword);
+
+        Client value = userArgumentCaptor.getValue();
+        assertAll(
+                () -> assertEquals(newEmail, value.getEmail()),
+                () -> assertEquals(newName, value.getUsername()),
+                () -> assertEquals(newPassword, value.getPassword())
+        );
     }
 
 }

@@ -43,7 +43,9 @@ class SlotRepositoryTest {
         slotRepository.saveAndFlush(slot);
 
         assertThat(slot.getId()).isNotNull();
-        assertThat(slot).isEqualTo(getSlot(slot.getId(), client.get()));
+        assertThat(slot)
+                .usingRecursiveComparison().withStrictTypeChecking()
+                .isEqualTo(getSlot(slot.getId(), client.get()));
     }
 
     private Slot getSlot(Long id, Client client) {
