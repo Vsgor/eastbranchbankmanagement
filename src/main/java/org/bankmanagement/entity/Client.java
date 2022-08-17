@@ -1,6 +1,5 @@
 package org.bankmanagement.entity;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.bankmanagement.enums.Role;
@@ -11,7 +10,6 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode
 @Table(name = "client", schema = "accounts")
 public class Client {
 

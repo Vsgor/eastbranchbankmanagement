@@ -2,7 +2,7 @@ package org.bankmanagement.filter;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
-import org.bankmanagement.service.TokenManager;
+import org.bankmanagement.manager.TokenManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
+@SuppressWarnings("NullableProblems")
 @RequiredArgsConstructor
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
@@ -25,14 +26,17 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
     private final String loginEndpoint;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, @NotNull HttpServletResponse response,
-                                    @NotNull FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    @NotNull HttpServletResponse response,
+                                    @NotNull FilterChain filterChain)
+            throws ServletException, IOException {
 
         if (!request.getServletPath().startsWith(loginEndpoint)) authorize(request);
 
         filterChain.doFilter(request, response);
     }
-    private void authorize(HttpServletRequest request){
+
+    private void authorize(HttpServletRequest request) {
 //        Does request have authorization parameter
         String auth = request.getHeader("AUTHORIZATION");
         if (auth != null && auth.startsWith("Bearer ")) {

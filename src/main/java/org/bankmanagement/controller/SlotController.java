@@ -29,7 +29,7 @@ public class SlotController {
 
     @LogMethod
     @GetMapping("{slotId}")
-    public SlotDto getSlotInformation(@PathVariable Long slotId, Principal principal) {
+    public SlotDto getSlot(@PathVariable Long slotId, Principal principal) {
         return slotService.getSlot(slotId, principal.getName());
     }
 
@@ -49,14 +49,14 @@ public class SlotController {
     }
 
     @LogMethod
-    @PostMapping("transaction")
-    public SlotDto transferToCustomer(@RequestBody TransferDto transferDto, Principal principal) {
+    @PostMapping("transfer")
+    public SlotDto transferToCustomer(@Validated @RequestBody TransferDto transferDto, Principal principal) {
         return slotService.transferToCustomer(transferDto, principal.getName());
     }
 
     @LogMethod
-    @DeleteMapping
-    public SlotDto closeSlot(@RequestParam @NotNull Long slotId, Principal principal) {
+    @DeleteMapping("{slotId}")
+    public SlotDto closeSlot(@PathVariable Long slotId, Principal principal) {
         return slotService.deactivateSlot(slotId, principal.getName());
     }
 }

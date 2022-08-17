@@ -29,13 +29,7 @@ class ClientMapperTest {
 
         ClientDto clientDto = mapper.mapToDto(client);
 
-        assertAll(
-                () -> assertThat(clientDto.getId()).isEqualTo(client.getId()),
-                () -> assertThat(clientDto.getUsername()).isEqualTo(client.getUsername()),
-                () -> assertThat(clientDto.getEmail()).isEqualTo(client.getEmail()),
-                () -> assertThat(clientDto.getRole()).isEqualTo(client.getRole().name()),
-                () -> assertThat(clientDto.isActive()).isEqualTo(client.isActive())
-        );
+        assertThat(clientDto).usingRecursiveComparison().isEqualTo(client);
     }
 
     @Test
