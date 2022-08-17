@@ -2,7 +2,7 @@ package org.bankmanagement.filter;
 
 import lombok.RequiredArgsConstructor;
 import org.bankmanagement.dataobject.UserDetailsImpl;
-import org.bankmanagement.service.TokenManager;
+import org.bankmanagement.manager.TokenManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;

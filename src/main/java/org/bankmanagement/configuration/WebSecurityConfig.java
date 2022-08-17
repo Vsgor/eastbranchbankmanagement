@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.bankmanagement.enums.Role;
 import org.bankmanagement.filter.CustomAuthenticationFilter;
 import org.bankmanagement.filter.CustomAuthorizationFilter;
-import org.bankmanagement.service.TokenManager;
+import org.bankmanagement.manager.TokenManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;

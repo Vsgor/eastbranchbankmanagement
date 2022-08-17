@@ -2,7 +2,7 @@ package org.bankmanagement.filter;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
-import org.bankmanagement.service.TokenManager;
+import org.bankmanagement.manager.TokenManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
