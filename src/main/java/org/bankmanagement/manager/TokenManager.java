@@ -13,11 +13,11 @@ import java.util.Date;
 @Component
 public class TokenManager {
 
-    @Value("${custom.security.issuer}")
+    @Value("${security.jwt.issuer}")
     private String issuer;
-    @Value("${custom.security.lifetime.minutes}")
+    @Value("${security.jwt.lifetime.minutes}")
     private Integer lifeTimeInMinutes;
-    @Value("${custom.security.secret}")
+    @Value("${security.jwt.secret}")
     private String secret;
 
     /**
