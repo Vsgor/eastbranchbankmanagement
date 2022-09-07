@@ -22,14 +22,24 @@ kafka:
   bootstrap-address: localhost:29013
   #  topic name section
   topic:
-    downloader: download_scheduler_topic_for_tests
+    report: transaction.report
+  partition-count: 3
+  replica-count: 1
 
+cookie:
+  #  cookie lifetime is 1 month
+  lifetime:
+    minutes: 43200
 security:
   jwt:
     issuer: east branch bank manager
-    #   token lifetime in minutes
     lifetime:
-      minutes: 15
+      access:
+        #        access token lifetime is 1 hour
+        minutes: 60
+      refresh:
+        #        refresh token lifetime is 1 week
+        minutes: 10080
     #   for security measures secret must be at least 256 bits = 32 characters
     secret: secret that is longer than 32 characters
 

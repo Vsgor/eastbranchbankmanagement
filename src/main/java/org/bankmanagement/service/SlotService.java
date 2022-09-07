@@ -3,6 +3,7 @@ package org.bankmanagement.service;
 import lombok.RequiredArgsConstructor;
 import org.bankmanagement.aspect.log.LogMethod;
 import org.bankmanagement.dataobject.SlotDto;
+import org.bankmanagement.dataobject.TransactionReportDto;
 import org.bankmanagement.dataobject.TransferDto;
 import org.bankmanagement.entity.Client;
 import org.bankmanagement.entity.Slot;
@@ -10,6 +11,7 @@ import org.bankmanagement.exception.NoActiveSlotsException;
 import org.bankmanagement.exception.SlotIsDisabledException;
 import org.bankmanagement.exception.SlotNotFoundException;
 import org.bankmanagement.exception.WithdrawException;
+import org.bankmanagement.kafka.TransactionReportProducer;
 import org.bankmanagement.mapper.SlotMapper;
 import org.bankmanagement.repository.SlotRepository;
 import org.springframework.stereotype.Service;
@@ -28,8 +30,10 @@ public class SlotService {
     private final ClientService clientService;
     private final SlotRepository slotRepository;
     private final SlotMapper slotMapper;
+    private final TransactionReportProducer producer;
 
     @LogMethod
+    @Transactional
     public List<SlotDto> getAllSlots(String username) {
         return clientService.findClient(username).getSlots()
                 .stream()
@@ -39,6 +43,7 @@ public class SlotService {
     }
 
     @LogMethod
+    @Transactional
     public SlotDto getSlot(Long slotId, String username) {
         return slotMapper.mapToDto(
                 findSLot(slotId, clientService.findClient(username)));
@@ -73,12 +78,12 @@ public class SlotService {
 
     @LogMethod
     @Transactional
-    public SlotDto transferToCustomer(TransferDto transferDto, String username) {
+    public SlotDto transferToCustomer(TransferDto transferDto, String withdrawUsername) {
         Long withdrawSlotId = transferDto.getWithdrawSlotId();
         Long transferSum = transferDto.getTransferSum();
         Client depositClient = clientService.findClient(transferDto.getDepositClientId());
 
-        Slot withdrawSlot = getOperatedSlot(withdrawSlotId, username);
+        Slot withdrawSlot = getOperatedSlot(withdrawSlotId, withdrawUsername);
         Slot depositSlot = getMostValuableSlot(depositClient);
 
         long withdrawSlotState = withdrawSlot.getState();
@@ -89,6 +94,8 @@ public class SlotService {
         withdrawSlot.setState(withdrawSlotState - transferSum);
         depositSlot.setState(depositSlot.getState() + transferSum);
 
+        sendTransactionReport(withdrawUsername, depositClient.getUsername(), transferSum, withdrawSlot);
+
         return slotMapper.mapToDto(withdrawSlot);
     }
 
@@ -98,6 +105,18 @@ public class SlotService {
         Slot slot = findSLot(slotId, clientService.findClient(username));
         slot.setActive(false);
         return slotMapper.mapToDto(slot);
+    }
+
+    private void sendTransactionReport(String withdrawUsername,
+                                       String depositUsername,
+                                       Long transferSum,
+                                       Slot withdrawSlot) {
+        TransactionReportDto reportDto = new TransactionReportDto();
+        reportDto.setTransferSum(transferSum);
+        reportDto.setWithdrawUsername(withdrawUsername);
+        reportDto.setDepositUsername(depositUsername);
+        reportDto.setWithdrawState(withdrawSlot.getState());
+        producer.sendTransactionInfo(reportDto);
     }
 
     private Slot getOperatedSlot(Long slotId, String username) {

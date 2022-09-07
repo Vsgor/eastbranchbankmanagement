@@ -1,6 +1,7 @@
 package org.bankmanagement.manager;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import org.bankmanagement.dataobject.JwtPair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,24 +22,32 @@ class TokenManagerTest {
 
     @BeforeEach
     void setUp() {
-        int lifeTimeInMinutes = 1;
+        int accessTokenLifeTimeInMinutes = 5;
+        int refreshTokenLifeTimeInMinutes = 5;
         String secret = "test secret";
 
         ReflectionTestUtils.setField(tokenManager, "issuer", issuer);
-        ReflectionTestUtils.setField(tokenManager, "lifeTimeInMinutes", lifeTimeInMinutes);
+        ReflectionTestUtils.setField(tokenManager, "accessTokenLifeTimeInMinutes", accessTokenLifeTimeInMinutes);
+        ReflectionTestUtils.setField(tokenManager, "refreshTokenLifeTimeInMinutes", refreshTokenLifeTimeInMinutes);
         ReflectionTestUtils.setField(tokenManager, "secret", secret);
     }
 
     @Test
     void testCycle() {
         String username = "some username";
-        String token = tokenManager.createToken(username);
-        DecodedJWT jwt = tokenManager.verifyToken(token);
+        JwtPair jwtPair = tokenManager.generateJwtPair(username);
+        DecodedJWT decodedAccessToken = tokenManager.verifyToken(jwtPair.getAccessToken());
+        DecodedJWT decodedRefreshToken = tokenManager.verifyToken(jwtPair.getRefreshToken());
 
-        assertThat(jwt.getIssuedAt()).isBefore(new Date());
-        assertThat(jwt.getExpiresAt()).isAfter(new Date());
-        assertThat(jwt.getIssuer()).isEqualTo(issuer);
-        assertThat(jwt.getSubject()).isEqualTo(username);
+        assertThat(decodedAccessToken.getIssuedAt()).isBefore(new Date());
+        assertThat(decodedAccessToken.getExpiresAt()).isAfter(new Date());
+        assertThat(decodedAccessToken.getIssuer()).isEqualTo(issuer);
+        assertThat(decodedAccessToken.getSubject()).isEqualTo(username);
+
+        assertThat(decodedRefreshToken.getIssuedAt()).isBefore(new Date());
+        assertThat(decodedRefreshToken.getExpiresAt()).isAfter(new Date());
+        assertThat(decodedRefreshToken.getIssuer()).isEqualTo(issuer);
+        assertThat(decodedRefreshToken.getSubject()).isEqualTo(username);
     }
 
 }

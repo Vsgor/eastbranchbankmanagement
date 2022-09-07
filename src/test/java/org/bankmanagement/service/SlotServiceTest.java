@@ -7,6 +7,7 @@ import org.bankmanagement.entity.Slot;
 import org.bankmanagement.exception.SlotIsDisabledException;
 import org.bankmanagement.exception.SlotNotFoundException;
 import org.bankmanagement.exception.WithdrawException;
+import org.bankmanagement.kafka.TransactionReportProducer;
 import org.bankmanagement.mapper.SlotMapper;
 import org.bankmanagement.repository.SlotRepository;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,8 @@ class SlotServiceTest {
     private SlotRepository slotRepository;
     @Mock
     private SlotMapper slotMapper;
+    @Mock
+    private TransactionReportProducer producer;
 
     @InjectMocks
     private SlotService slotService;
@@ -280,6 +283,7 @@ class SlotServiceTest {
 
         verifyNoMoreInteractions(clientService);
 
+        verifyNoInteractions(producer);
         verifyNoInteractions(slotMapper);
         verifyNoInteractions(slotRepository);
     }
@@ -316,6 +320,7 @@ class SlotServiceTest {
         verify(clientService).findClient(withdrawClientUsername);
         verify(clientService).findClient(depositClintId);
         verify(slotMapper).mapToDto(withdrawSlot);
+        verify(producer).sendTransactionInfo(any());
 
         verifyNoMoreInteractions(clientService);
         verifyNoInteractions(slotRepository);

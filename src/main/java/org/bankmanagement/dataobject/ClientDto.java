@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bankmanagement.enums.Role;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class ClientDto {
@@ -12,4 +14,5 @@ public class ClientDto {
     private String username;
     private Role role;
     private boolean active;
+    private List<SlotDto> slots;
 }

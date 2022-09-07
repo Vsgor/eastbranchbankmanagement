@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.bankmanagement.enums.Role;
 import org.bankmanagement.filter.CustomAuthenticationFilter;
 import org.bankmanagement.filter.CustomAuthorizationFilter;
+import org.bankmanagement.manager.CookieManager;
 import org.bankmanagement.manager.TokenManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,6 +26,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String LOGIN_ENDPOINT = "/login";
     private final UserDetailsService userDetailsService;
     private final TokenManager tokenManager;
+    private final CookieManager cookieManager;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -44,12 +46,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        AbstractAuthenticationProcessingFilter authenticationFilter = new CustomAuthenticationFilter(tokenManager);
+        AbstractAuthenticationProcessingFilter authenticationFilter =
+                new CustomAuthenticationFilter(tokenManager, cookieManager);
         authenticationFilter.setFilterProcessesUrl(LOGIN_ENDPOINT);
         authenticationFilter.setAuthenticationManager(authenticationManagerBean());
 
         CustomAuthorizationFilter authorizationFilter =
-                new CustomAuthorizationFilter(tokenManager, userDetailsService, LOGIN_ENDPOINT);
+                new CustomAuthorizationFilter(tokenManager, cookieManager, userDetailsService, LOGIN_ENDPOINT);
 
         http
                 .csrf().disable()

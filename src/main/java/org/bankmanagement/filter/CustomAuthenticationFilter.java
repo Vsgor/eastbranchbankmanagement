@@ -1,7 +1,9 @@
 package org.bankmanagement.filter;
 
 import lombok.RequiredArgsConstructor;
+import org.bankmanagement.dataobject.JwtPair;
 import org.bankmanagement.dataobject.UserDetailsImpl;
+import org.bankmanagement.manager.CookieManager;
 import org.bankmanagement.manager.TokenManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,12 +17,13 @@ import javax.servlet.http.HttpServletResponse;
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final TokenManager tokenManager;
+    private final CookieManager cookieManager;
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                             Authentication authResult) {
         UserDetails userDetails = (UserDetailsImpl) authResult.getPrincipal();
-        String token = tokenManager.createToken(userDetails.getUsername());
-        response.setHeader("access_token", token);
+        JwtPair jwtPair = tokenManager.generateJwtPair(userDetails.getUsername());
+        cookieManager.addAuthCookies(response, jwtPair);
     }
 }

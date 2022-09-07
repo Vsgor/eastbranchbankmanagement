@@ -1,5 +1,6 @@
 package org.bankmanagement.configuration;
 
+import org.bankmanagement.manager.CookieManager;
 import org.bankmanagement.manager.TokenManager;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -11,6 +12,9 @@ public class TestWebConfiguration {
 
     @MockBean
     private UserDetailsService userDetailsService;
+
+    @MockBean
+    private CookieManager cookieManager;
 
     @MockBean
     private TokenManager tokenManager;
