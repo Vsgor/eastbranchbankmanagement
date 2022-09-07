@@ -3,13 +3,13 @@ services:
   redis:
     image: redis:latest
     ports:
-      - 33412:3412
+      - "33412:3412"
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     restart: unless-stopped
     ports:
-      - 22181:2181
+      - "22181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -20,7 +20,7 @@ services:
       - zookeeper
     restart: unless-stopped
     ports:
-      - 29013:29013
+      - "29013:29013"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
