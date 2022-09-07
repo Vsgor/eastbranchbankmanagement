@@ -22,14 +22,13 @@ import java.io.IOException;
 
 import static java.util.Objects.isNull;
 
-@SuppressWarnings("NullableProblems")
 @RequiredArgsConstructor
+@SuppressWarnings("NullableProblems")
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
     private final TokenManager tokenManager;
     private final CookieManager cookieManager;
     private final UserDetailsService detailsService;
-    private final String loginEndpoint;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -37,7 +36,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                                     @NotNull FilterChain filterChain)
             throws ServletException, IOException {
 
-        if (!request.getServletPath().startsWith(loginEndpoint)) authorize(request, response);
+        authorize(request, response);
 
         filterChain.doFilter(request, response);
     }

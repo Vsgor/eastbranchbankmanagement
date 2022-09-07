@@ -29,6 +29,7 @@ public class TokenManager {
      *
      * @param token to verify
      * @return object with decoded token
+     * @throws JWTVerificationException if token is expired or invalid
      */
     public DecodedJWT verifyToken(String token) throws JWTVerificationException {
         JWTVerifier verifier = JWT
@@ -40,7 +41,6 @@ public class TokenManager {
 
     /**
      * Generate a pair of access and refresh tokens
-     *
      * @param username tokens subject
      * @return Object containing access and refresh tokens
      */
@@ -52,7 +52,6 @@ public class TokenManager {
 
     /**
      * Generates token with secret, issuer and lifetime
-     *
      * @param username token subject
      * @param lifeTime in minutes
      * @return json web token in string format
