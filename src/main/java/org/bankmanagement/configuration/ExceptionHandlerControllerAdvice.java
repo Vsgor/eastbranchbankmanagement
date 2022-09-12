@@ -12,7 +12,7 @@ import javax.validation.ConstraintViolationException;
 
 @Slf4j
 @RestControllerAdvice
-public class ExceptionHandlerControllerAdvise {
+public class ExceptionHandlerControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {

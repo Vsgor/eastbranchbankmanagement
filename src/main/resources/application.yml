@@ -6,7 +6,7 @@ spring:
     password: triforce
     driver-class-name: org.postgresql.Driver
   jpa:
-    database-platform:  org.hibernate.dialect.PostgreSQLDialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     #    anti-pattern
     open-in-view: false
     #    no automatic actions with schema
@@ -16,13 +16,17 @@ spring:
   flyway:
     locations: classpath:db/migration
     schemas: accounts
+  kafka:
+    producer:
+      properties:
+        spring.json.add.type.headers: false
 
 kafka:
   #  kafka adress
   bootstrap-address: localhost:29013
   #  topic name section
   topic:
-    report: transaction.report
+    report: topic-transaction-report
   partition-count: 3
   replica-count: 1
 
