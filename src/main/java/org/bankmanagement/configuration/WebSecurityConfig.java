@@ -43,7 +43,7 @@ public class WebSecurityConfig {
 
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers(ADMIN_ENDPOINT).hasRole(Role.ROLE_ADMIN.getShortName())
+                .antMatchers(ADMIN_ENDPOINT).hasAuthority(Role.ROLE_ADMIN.toString())
                 .antMatchers(LOGIN_ENDPOINT.concat("/**")).anonymous()
                 .anyRequest().authenticated()
                 .and()

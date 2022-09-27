@@ -8,6 +8,6 @@ VALUES ('rick@roll.ed',
 insert into accounts.client (email, username, password, role, active)
 VALUES ('morty_smith@galaxy.shit',
         'Morty',
-        '$2a$10$1KNhUVeS/FJsGuRxSaRjiuaqhgQdlDIAypwhXzNqNDdqoCRfo0jF6',
+        '$2a$10$9pMh./B1HTe0GewiE8zWNOy2FDq6nP9q9xqgY7/JjYHfP0z8/2uEm',
         'ROLE_CLIENT',
         true);

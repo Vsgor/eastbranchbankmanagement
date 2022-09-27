@@ -10,6 +10,7 @@ import org.mockito.Captor;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,6 +44,16 @@ class ClientControllerIT extends AbstractControllerIT {
                 .andExpect(responseBody().containsObject(clientDto, ClientDto.class));
 
         verify(clientService).getClient(USERNAME);
+    }
+
+    @Test
+    @SneakyThrows
+    @WithAnonymousUser
+    void getClientInfo_WithAnonymousUser() {
+        mockMvc.perform(get(URI))
+                .andExpect(status().isForbidden());
+
+        verifyNoInteractions(clientService);
     }
 
     @Test
@@ -100,4 +111,13 @@ class ClientControllerIT extends AbstractControllerIT {
         assertThat(ticketCaptor.getValue()).usingRecursiveComparison().isEqualTo(ticket);
     }
 
+    @Test
+    @SneakyThrows
+    @WithAnonymousUser
+    void updateClientInfo_WithAnonymousUser() {
+        mockMvc.perform(put(URI))
+                .andExpect(status().isForbidden());
+
+        verifyNoInteractions(clientService);
+    }
 }

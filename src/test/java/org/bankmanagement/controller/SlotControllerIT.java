@@ -10,6 +10,7 @@ import org.mockito.Captor;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.LinkedMultiValueMap;
@@ -31,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class SlotControllerIT extends AbstractControllerIT {
 
     private static final String URI = "/slot";
+    private static final String TRANSFER_URI = String.join("/", URI, "transfer");
 
     @MockBean
     private SlotService slotService;
@@ -65,11 +67,20 @@ class SlotControllerIT extends AbstractControllerIT {
 
     @Test
     @SneakyThrows
+    @WithAnonymousUser
+    void getAllSlots_WithAnonymousUser() {
+        mockMvc.perform(get(URI))
+                .andExpect(status().isForbidden());
+        verifyNoInteractions(slotService);
+    }
+
+    @Test
+    @SneakyThrows
     void getSlot() {
         Long slotId = 25L;
         SlotDto slotDto = getSlotDto(slotId);
 
-        String getSlotUri = URI.concat("/" + slotId);
+        String getSlotUri = String.join("/", URI, String.valueOf(slotId));
         when(slotService.getSlot(slotId, USERNAME)).thenReturn(slotDto);
 
         mockMvc.perform(MockMvcRequestBuilders.get(getSlotUri))
@@ -77,6 +88,16 @@ class SlotControllerIT extends AbstractControllerIT {
                 .andExpect(responseBody().containsObject(slotDto, SlotDto.class));
 
         verify(slotService).getSlot(slotId, USERNAME);
+    }
+
+    @Test
+    @SneakyThrows
+    @WithAnonymousUser
+    void getSlot_WithAnonymousUser() {
+        String getSlotUri = String.join("/", URI, "3");
+        mockMvc.perform(get(getSlotUri))
+                .andExpect(status().isForbidden());
+        verifyNoInteractions(slotService);
     }
 
     @Test
@@ -91,6 +112,15 @@ class SlotControllerIT extends AbstractControllerIT {
                 .andExpect(responseBody().containsObject(slotDto, SlotDto.class));
 
         verify(slotService).createSlot(USERNAME);
+    }
+
+    @Test
+    @SneakyThrows
+    @WithAnonymousUser
+    void openSlot_WithAnonymousUser() {
+        mockMvc.perform(post(URI))
+                .andExpect(status().isForbidden());
+        verifyNoInteractions(slotService);
     }
 
     @Test
@@ -128,8 +158,17 @@ class SlotControllerIT extends AbstractControllerIT {
 
     @Test
     @SneakyThrows
+    @WithAnonymousUser
+    void updateSlotState_WithAnonymousUser() {
+        mockMvc.perform(patch(URI))
+                .andExpect(status().isForbidden());
+        verifyNoInteractions(slotService);
+    }
+
+    @Test
+    @SneakyThrows
     void transferToCustomer_WithEemptyTicket() {
-        mockMvc.perform(post(URI.concat("/transfer")))
+        mockMvc.perform(post(TRANSFER_URI))
                 .andExpect(status().isBadRequest())
                 .andExpect(responseBody().messageStartsWith("Required request body is missing"));
 
@@ -143,7 +182,7 @@ class SlotControllerIT extends AbstractControllerIT {
         transferDto.setDepositClientId(3L);
         transferDto.setTransferSum(0L);
 
-        mockMvc.perform(post(URI.concat("/transfer")).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post(TRANSFER_URI).contentType(MediaType.APPLICATION_JSON)
                         .content(mapToJson(transferDto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(responseBody().messageStartsWith("Validation failed"));
@@ -162,7 +201,7 @@ class SlotControllerIT extends AbstractControllerIT {
 
         when(slotService.transferToCustomer(any(TransferDto.class), eq(USERNAME))).thenReturn(slotDto);
 
-        mockMvc.perform(post(URI.concat("/transfer")).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post(TRANSFER_URI).contentType(MediaType.APPLICATION_JSON)
                         .content(mapToJson(transferDto)))
                 .andExpect(status().isOk())
                 .andExpect(responseBody().containsObject(slotDto, SlotDto.class));
@@ -170,6 +209,15 @@ class SlotControllerIT extends AbstractControllerIT {
         verify(slotService).transferToCustomer(transferCaptor.capture(), eq(USERNAME));
 
         assertThat(transferCaptor.getValue()).usingRecursiveComparison().isEqualTo(transferDto);
+    }
+
+    @Test
+    @SneakyThrows
+    @WithAnonymousUser
+    void transferToCustomer_WithAnonymousUser() {
+        mockMvc.perform(post(TRANSFER_URI))
+                .andExpect(status().isForbidden());
+        verifyNoInteractions(slotService);
     }
 
     @Test
@@ -187,5 +235,16 @@ class SlotControllerIT extends AbstractControllerIT {
                 .andExpect(responseBody().containsObject(slotDto, SlotDto.class));
 
         verify(slotService).deactivateSlot(slotId, USERNAME);
+    }
+
+    @Test
+    @SneakyThrows
+    @WithAnonymousUser
+    void closeSlot_WithAnonymousUser() {
+        String deleteSlotUri = String.join("/", URI, "3");
+
+        mockMvc.perform(delete(deleteSlotUri))
+                .andExpect(status().isForbidden());
+        verifyNoInteractions(slotService);
     }
 }

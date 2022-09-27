@@ -13,7 +13,7 @@ import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest
 @Import(TestWebConfiguration.class)
-public class AbstractControllerIT {
+public abstract class AbstractControllerIT {
 
     protected static final String USERNAME = "Some random username";
     private final ObjectMapper objectMapper = new ObjectMapper();

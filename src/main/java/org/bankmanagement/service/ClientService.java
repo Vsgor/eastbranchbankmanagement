@@ -29,6 +29,7 @@ public class ClientService {
     private final PasswordEncoder encoder;
 
     @LogMethod
+    @Transactional
     public ClientDto getClient(String username) {
         Client client = findClient(username);
         return clientMapper.mapToDto(client);
